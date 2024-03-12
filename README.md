@@ -1,7 +1,7 @@
 # PCA-EXP-2-Matrix-Summation-using-2D-Grids-and-2D-Blocks-AY-23-24
 
-<h3>NAME : S.ABHISHEK</h3>
-<h3>REGISTER NO : 212221230002</h3>
+<h3>NAME : Dhivya Shri B</h3>
+<h3>REGISTER NO : 212221230009</h3>
 <h3>EX. NO 3</h3>
 <h3>DATE : 12.03.2024</h3>
 <h1> <align=centr> MATRIX SUMMATION WITH A 2D GRID AND 2D BLOCKS </h3>
