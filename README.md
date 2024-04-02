@@ -4,7 +4,7 @@
 <h3>NAME: DHIVYA SHRI B</h3>
 <h3>REG.NO: 212221230009</h3>
 <h3>EX. NO: 02</h3>
-<h3>DATE: 6.03.24</h3>
+<h3>DATE: </h3>
 <h1> <align=center> MATRIX SUMMATION WITH A 2D GRID AND 2D BLOCKS </h3>
 i.  Use the file sumMatrixOnGPU-2D-grid-2D-block.cu
 ii. Matrix summation with a 2D grid and 2D blocks. Adapt it to integer matrix addition. Find the best execution configuration. </h3>
@@ -36,94 +36,6 @@ Google Colab with NVCC Compiler
 
 ## PROGRAM:
 ```c
-%%cuda
-#include <cuda_runtime.h>
-#include <stdio.h>
-#include <sys/time.h>
-
-#ifndef _COMMON_H
-#define _COMMON_H
-
-#define CHECK(call)                                                            \
-{                                                                              \
-    const cudaError_t error = call;                                            \
-    if (error != cudaSuccess)                                                  \
-    {                                                                          \
-        fprintf(stderr, "Error: %s:%d, ", __FILE__, __LINE__);                 \
-        fprintf(stderr, "code: %d, reason: %s\n", error,                       \
-                cudaGetErrorString(error));                                    \
-        exit(1);                                                               \
-    }                                                                          \
-}
-
-#define CHECK_CUBLAS(call)                                                     \
-{                                                                              \
-    cublasStatus_t err;                                                        \
-    if ((err = (call)) != CUBLAS_STATUS_SUCCESS)                               \
-    {                                                                          \
-        fprintf(stderr, "Got CUBLAS error %d at %s:%d\n", err, __FILE__,       \
-                __LINE__);                                                     \
-        exit(1);                                                               \
-    }                                                                          \
-}
-
-#define CHECK_CURAND(call)                                                     \
-{                                                                              \
-    curandStatus_t err;                                                        \
-    if ((err = (call)) != CURAND_STATUS_SUCCESS)                               \
-    {                                                                          \
-        fprintf(stderr, "Got CURAND error %d at %s:%d\n", err, __FILE__,       \
-                __LINE__);                                                     \
-        exit(1);                                                               \
-    }                                                                          \
-}
-
-#define CHECK_CUFFT(call)                                                      \
-{                                                                              \
-    cufftResult err;                                                           \
-    if ( (err = (call)) != CUFFT_SUCCESS)                                      \
-    {                                                                          \
-        fprintf(stderr, "Got CUFFT error %d at %s:%d\n", err, __FILE__,        \
-                __LINE__);                                                     \
-        exit(1);                                                               \
-    }                                                                          \
-}
-
-#define CHECK_CUSPARSE(call)                                                   \
-{                                                                              \
-    cusparseStatus_t err;                                                      \
-    if ((err = (call)) != CUSPARSE_STATUS_SUCCESS)                             \
-    {                                                                          \
-        fprintf(stderr, "Got error %d at %s:%d\n", err, __FILE__, __LINE__);   \
-        cudaError_t cuda_err = cudaGetLastError();                             \
-        if (cuda_err != cudaSuccess)                                           \
-        {                                                                      \
-            fprintf(stderr, "  CUDA error \"%s\" also detected\n",             \
-                    cudaGetErrorString(cuda_err));                             \
-        }                                                                      \
-        exit(1);                                                               \
-    }                                                                          \
-}
-
-inline double seconds()
-{
-    struct timeval tp;
-    struct timezone tzp;
-    int i = gettimeofday(&tp, &tzp);
-    return ((double)tp.tv_sec + (double)tp.tv_usec * 1.e-6);
-}
-
-#endif // _COMMON_H
-
-
-
-/*
- * This example demonstrates a simple vector sum on the GPU and on the host.
- * sumArraysOnGPU splits the work of the vector sum across CUDA threads on the
- * GPU. A 2D thread block and 2D grid are used. sumArraysOnHost sequentially
- * iterates through vector elements on the host.
- */
-
 void initialData(float *ip, const int size)
 {
     int i;
@@ -182,19 +94,16 @@ void checkResult(float *hostRef, float *gpuRef, const int N)
 }
 
 // grid 2D block 2D
-__global__ void sumMatrixOnGPU2D(float *MatA, float *MatB, float *MatC, int nx,
-                                 int ny)
+__global__ void sumMatrixOnGPU2D(float *A, float *B, float *C, int NX, int NY)
 {
+    unsigned int ix = blockIdx.x * blockDim.x + threadIdx.x;
+    unsigned int iy = blockIdx.y * blockDim.y + threadIdx.y;
+    unsigned int idx = iy * NX + ix;
 
-
-
-
-//Write your code here
-
-
-
-
-
+    if (ix < NX && iy < NY)
+    {
+        C[idx] = A[idx] + B[idx];
+    }
 }
 
 int main(int argc, char **argv)
@@ -288,8 +197,11 @@ int main(int argc, char **argv)
     return (0);
 }
 ```
-
 ## OUTPUT:
+### Float point data:
+![image](https://github.com/Meenakshi0907/PCA-EXP-2-MATRIX-SUMMATION-USING-2D-GRIDS-AND-2D-BLOCKS-AY-23-24/assets/94165108/a31d0390-62c2-46dd-9991-dbc20a8a09dd)
+### Int point data:
+![image](https://github.com/Meenakshi0907/PCA-EXP-2-MATRIX-SUMMATION-USING-2D-GRIDS-AND-2D-BLOCKS-AY-23-24/assets/94165108/608125f9-b209-4ddf-a382-b3f74ce8592e)
 
 ## RESULT:
-The host took _________ seconds to complete it’s computation, while the GPU outperforms the host and completes the computation in ________ seconds. Therefore, float variables in the GPU will result in the best possible result. Thus, matrix summation using 2D grids and 2D blocks has been performed successfully.
+The host took 11.495350 seconds to complete it’s computation, while the GPU outperforms the host and completes the computation in 0.013784 seconds. Therefore, float variables in the GPU will result in the best possible result. Thus, matrix summation using 2D grids and 2D blocks has been performed successfully.
